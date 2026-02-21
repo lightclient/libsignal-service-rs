@@ -73,7 +73,7 @@ where
         // XXX: fill in rest from PushServiceSocket
         code => {
             let response_text = response.text().await?;
-            tracing::trace!(status_code =% code, body = response_text, "unhandled HTTP response");
+            tracing::warn!(status_code =% code, body = response_text, "unhandled HTTP response");
             Err(ServiceError::UnhandledResponseCode {
                 http_code: code.as_u16(),
             })

@@ -45,16 +45,27 @@ pub(crate) struct DeviceInfoEncrypted {
     pub last_seen: DateTime<Utc>,
 }
 
+fn is_false(v: &bool) -> bool {
+    !v
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AccountAttributes {
-    #[serde(default, with = "serde_optional_base64")]
+    #[serde(
+        default,
+        with = "serde_optional_base64",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub signaling_key: Option<Vec<u8>>,
     pub registration_id: u32,
     pub pni_registration_id: u32,
+    #[serde(default, skip_serializing_if = "is_false")]
     pub voice: bool,
+    #[serde(default, skip_serializing_if = "is_false")]
     pub video: bool,
     pub fetches_messages: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub pin: Option<String>,
     pub registration_lock: Option<String>,
     #[serde(default, with = "serde_optional_base64")]
@@ -62,6 +73,7 @@ pub struct AccountAttributes {
     pub unrestricted_unidentified_access: bool,
     pub discoverable_by_phone_number: bool,
     pub capabilities: DeviceCapabilities,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
 }
 
